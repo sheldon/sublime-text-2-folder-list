@@ -64,7 +64,7 @@ class FoldersListCommand(sublime_plugin.WindowCommand, object):
   def open_folder(self, result):
     # self.scratch(result, title="Testing")
     s = sublime.load_settings("Folders.sublime-settings")
-    command = ['subl', os.getenv("HOME")+'/'+s.get('base_folder')+'/'+result]
+    command = ['/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl', os.getenv("HOME")+'/'+s.get('base_folder')+'/'+result]
     self.run_command(command)
 
 
