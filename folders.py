@@ -10,8 +10,9 @@ import re
 
 class FoldersListCommand(sublime_plugin.WindowCommand, object):
   def run(self, edit=None):
-    command = ['ls', 'Sites']
-    self.run_command(command, self.list_folders, working_dir="/Users/sheldon")
+    s = sublime.load_settings("Folders.sublime-settings")
+    command = ['ls', s.get('base_folder')]
+    self.run_command(command, self.list_folders, working_dir=os.getenv("HOME"))
 
   def active_view(self):
     return self.window.active_view()
