@@ -42,8 +42,6 @@ class FoldersListCommand(sublime_plugin.WindowCommand, object):
       self.active_view().run_command('save')
     if command[0] == 'git' and s.get('git_command'):
       command[0] = s.get('git_command')
-    if not callback:
-      callback = self.generic_done
 
     thread = CommandThread(command, callback, **kwargs)
     thread.start()
@@ -61,15 +59,13 @@ class FoldersListCommand(sublime_plugin.WindowCommand, object):
       return
     item = self.results[picked]
     # the commit hash is the first thing on the second line
-    self.log_result(item[1].split(' ')[0])
+    self.open_folder(item[0])
 
-  def log_result(self, ref):
-    self.run_command(
-      ['git', 'log', '-p', '-1', ref, '--', self.get_file_name()],
-      self.details_done)
-
-  def details_done(self, result):
-    self.scratch(result, title="Git Commit Details", syntax=plugin_file("Git Commit Message.tmLanguage"))
+  def open_folder(self, result):
+    # self.scratch(result, title="Testing")
+    s = sublime.load_settings("Folders.sublime-settings")
+    command = ['subl', os.getenv("HOME")+'/'+s.get('base_folder')+'/'+result]
+    self.run_command(command)
 
 
 class CommandThread(threading.Thread):
@@ -115,6 +111,7 @@ class CommandThread(threading.Thread):
         main_thread(sublime.error_message, "Git binary could not be found in PATH\n\nConsider using the git_command setting for the Git plugin\n\nPATH is: %s" % os.environ['PATH'])
       else:
         raise e
+
 
 def main_thread(callback, *args, **kwargs):
   # sublime.set_timeout gets used to send things onto the main thread
